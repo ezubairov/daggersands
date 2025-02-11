@@ -16,7 +16,8 @@ impl Plugin for GraphicsPlugin {
                     tiles::render_tiles,
                     pieces::render_pieces,
                     pieces::update_piece_position,
-                ),
+                )
+                    .run_if(on_event::<GameTick>),
             );
     }
 }

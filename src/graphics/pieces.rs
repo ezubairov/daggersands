@@ -17,7 +17,6 @@ pub fn render_pieces(
             "Player" => 4,
             _ => 116,
         };
-        let v = super::tile_to_world(position.0, Some(0.5));
         commands.entity(entity).insert((
             Sprite::from_atlas_image(
                 atlas.texture.clone(),
@@ -26,7 +25,8 @@ pub fn render_pieces(
                     index: sprite_idx,
                 },
             ),
-            Transform::from_translation(v),
+            Transform::from_translation(super::tile_to_world(position.0, Some(0.5)))
+                .with_scale(Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.)),
         ));
     }
 }

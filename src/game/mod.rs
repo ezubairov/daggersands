@@ -5,6 +5,7 @@ use std::collections::VecDeque;
 
 mod actions;
 mod animation;
+mod npcs;
 mod player;
 
 #[derive(Resource)]
@@ -57,10 +58,10 @@ fn handle_actor_queue(world: &mut World) {
     }
 
     // otherwise handle npc actor
-    // world.resource_mut::<ActorQueue>().0.pop_front();
-    // if let Some(action) = npcs::get_npc_action(entity, world) {
-    //     world.resource_mut::<ActionQueue>().0.push_back(action);
-    // }
+    world.resource_mut::<ActorQueue>().0.pop_front();
+    if let Some(action) = npcs::get_npc_action(entity, world) {
+        world.resource_mut::<ActionQueue>().0.push_back(action);
+    }
 }
 
 fn handle_action_queue(world: &mut World) {
@@ -94,7 +95,7 @@ impl Plugin for GamePlugin {
         app.init_resource::<ActionQueue>()
             .init_resource::<ActorQueue>()
             .init_resource::<QueueSystems>()
-            .add_systems(Startup, player::spawn_player)
+            .add_systems(PostStartup, (player::spawn_player, npcs::spawn_npcs))
             .add_systems(
                 Update,
                 (

@@ -14,17 +14,17 @@ pub fn handle_game_events(
                         vec![tile_to_world(*target, None)].into(),
                     )));
             }
-            // GameEvent::Attack(entity, target) => {
-            //     if let Ok(transform) = query.get(*entity) {
-            //         let current = transform.translation;
-            //         let target_v = tile_to_world(*target, None);
-            //         commands
-            //             .entity(*entity)
-            //             .insert(Animation(AnimationKind::Translate(
-            //                 vec![0.5 * (current + target_v), current].into(),
-            //             )));
-            //     }
-            // }
+            GameEvent::Attack(entity, target) => {
+                if let Ok(transform) = query.get(*entity) {
+                    let current = transform.translation;
+                    let target_v = tile_to_world(*target, None);
+                    commands
+                        .entity(*entity)
+                        .insert(Animation(AnimationKind::Translate(
+                            vec![0.5 * (current + target_v), current].into(),
+                        )));
+                }
+            }
         }
     }
 }
