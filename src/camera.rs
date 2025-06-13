@@ -1,5 +1,5 @@
 use bevy::{
-    color::palettes::css::{BLACK, BLUE, RED},
+    color::palettes::css::{BLACK, RED},
     render::{
         camera::{ScalingMode, Viewport},
         view::RenderLayers,
@@ -102,43 +102,28 @@ fn setup_ui_camera(mut commands: Commands) {
 }
 
 fn setup_gamelog_camera(mut commands: Commands) {
-    let camera = commands
-        .spawn((
-            GamelogCamera,
-            RenderLayers::from_layers(&[28]),
-            Camera {
-                // Higher than main, lower than UI
-                order: 1,
-                viewport: Some(Viewport {
-                    physical_position: UVec2::new(
-                        0,
-                        2 * (WINDOW_HEIGHT - GAMELOG_VIEWPORT_HEIGHT) as u32,
-                    ),
-
-                    // No idea why we actually have to multiply here, probably something with scaling
-                    physical_size: UVec2::new(
-                        2 * GAMELOG_VIEWPORT_WIDTH as u32,
-                        2 * GAMELOG_VIEWPORT_HEIGHT as u32,
-                    ),
-                    ..Default::default()
-                }),
-                clear_color: ClearColorConfig::None,
-                ..Default::default()
-            },
-        ))
-        .id();
-
     commands.spawn((
-        Node {
-            width: Val::Vw(100.),
-            height: Val::Vh(100.),
-            border: UiRect::axes(Val::Vw(5.), Val::Vh(5.)),
-            flex_wrap: FlexWrap::Wrap,
-            ..default()
+        GamelogCamera,
+        RenderLayers::from_layers(&[28]),
+        Camera {
+            // Higher than main, lower than UI
+            order: 1,
+            viewport: Some(Viewport {
+                physical_position: UVec2::new(
+                    0,
+                    2 * (WINDOW_HEIGHT - GAMELOG_VIEWPORT_HEIGHT) as u32,
+                ),
+
+                // No idea why we actually have to multiply here, probably something with scaling
+                physical_size: UVec2::new(
+                    2 * GAMELOG_VIEWPORT_WIDTH as u32,
+                    2 * GAMELOG_VIEWPORT_HEIGHT as u32,
+                ),
+                ..Default::default()
+            }),
+            clear_color: ClearColorConfig::None,
+            ..Default::default()
         },
-        BorderColor(BLUE.into()),
-        RenderLayers::layer(28),
-        TargetCamera(camera),
     ));
 }
 

@@ -6,6 +6,7 @@ mod globals;
 mod graphics;
 mod input;
 mod maps;
+mod ui;
 mod utils;
 
 mod prelude {
@@ -42,6 +43,7 @@ fn main() {
             graphics::GraphicsPlugin,
             game::GamePlugin,
             input::InputPlugin,
+            ui::UIPlugin,
         ))
         .add_event::<events::InputEvent>()
         .add_event::<events::GameEvent>()
