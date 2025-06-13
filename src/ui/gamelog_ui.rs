@@ -9,7 +9,7 @@ use bevy::{
 use crate::{camera::GamelogCamera, prelude::*};
 
 #[derive(Component)]
-pub struct GamelogRoot;
+pub struct GamelogUIRoot;
 
 #[derive(Default, Resource)]
 pub struct Gamelog {
@@ -27,20 +27,17 @@ impl Gamelog {
 const LINE_HEIGHT: f32 = 21.;
 const FONT_SIZE: f32 = 14.;
 
-fn setup_gamelog(camera: Query<Entity, With<GamelogCamera>>, mut commands: Commands) {
+fn setup_gamelog_ui(camera: Query<Entity, With<GamelogCamera>>, mut commands: Commands) {
     commands
         .spawn((
-            GamelogRoot,
+            GamelogUIRoot,
             Node {
                 width: Val::Vw(100.),
                 height: Val::Vh(100.),
-                margin: UiRect::axes(Val::Px(3.), Val::Px(3.)),
-                padding: UiRect::axes(Val::Px(3.), Val::Px(3.)),
-                border: UiRect::axes(Val::Px(3.), Val::Px(3.)),
+                padding: UiRect::all(Val::Px(3.)),
                 flex_direction: FlexDirection::Column,
                 ..default()
             },
-            BorderColor(WHITE.into()),
             RenderLayers::layer(28),
             UiTargetCamera(camera.single().unwrap()),
         ))
@@ -54,7 +51,7 @@ fn setup_gamelog(camera: Query<Entity, With<GamelogCamera>>, mut commands: Comma
 
 fn render_gamelog(
     mut commands: Commands,
-    gamelog_root: Query<Entity, With<GamelogRoot>>,
+    gamelog_root: Query<Entity, With<GamelogUIRoot>>,
     mut gamelog: ResMut<Gamelog>,
 ) {
     if gamelog.dirty {
@@ -62,12 +59,17 @@ fn render_gamelog(
             .entity(gamelog_root.single().unwrap())
             .with_children(|parent| {
                 parent
-                    .spawn(Node {
-                        flex_direction: FlexDirection::Column,
-                        align_self: AlignSelf::Stretch,
-                        overflow: Overflow::scroll_y(), // n.b.
-                        ..default()
-                    })
+                    .spawn((
+                        Node {
+                            flex_direction: FlexDirection::Column,
+                            align_self: AlignSelf::Stretch,
+                            overflow: Overflow::scroll_y(),
+                            border: UiRect::all(Val::Px(3.)),
+                            flex_grow: 1.,
+                            ..default()
+                        },
+                        BorderColor(WHITE.into()),
+                    ))
                     .with_children(|parent| {
                         for (j, i) in gamelog.entries.iter().enumerate() {
                             parent
@@ -133,13 +135,13 @@ fn update_scroll_position(
     }
 }
 
-pub struct GamelogPlugin;
-impl Plugin for GamelogPlugin {
+pub struct GamelogUIPlugin;
+impl Plugin for GamelogUIPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Gamelog>()
             // PostStartup as we need cameras to be already set up, but that's a hack
             // TODO: look for a way of defining dependency/order on a different plugin
-            .add_systems(PostStartup, setup_gamelog)
+            .add_systems(PostStartup, setup_gamelog_ui)
             .add_systems(Update, render_gamelog)
             .add_systems(Update, update_scroll_position);
     }

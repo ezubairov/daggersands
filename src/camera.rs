@@ -1,5 +1,5 @@
 use bevy::{
-    color::palettes::css::{BLACK, RED},
+    color::palettes::css::BLACK,
     render::{
         camera::{ScalingMode, Viewport},
         view::RenderLayers,
@@ -21,7 +21,7 @@ pub struct MainCamera;
 
 #[derive(Component)]
 #[require(Camera2d)]
-pub struct UICamera;
+pub struct CharacterStatusCamera;
 
 #[derive(Component)]
 #[require(Camera2d)]
@@ -60,44 +60,29 @@ fn setup_main_camera(mut commands: Commands) {
     ));
 }
 
-fn setup_ui_camera(mut commands: Commands) {
-    let camera = commands
-        .spawn((
-            UICamera,
-            RenderLayers::from_layers(&[30]),
-            Camera {
-                // Higher than everything else
-                order: 2,
-                viewport: Some(Viewport {
-                    physical_position: UVec2::new(
-                        2 * (WINDOW_WIDTH - UI_VIEWPORT_WIDTH) as u32,
-                        (WINDOW_HEIGHT - UI_VIEWPORT_HEIGHT) as u32,
-                    ),
-
-                    // No idea why we actually have to multiply here, probably something with scaling
-                    physical_size: UVec2::new(
-                        2 * UI_VIEWPORT_WIDTH as u32,
-                        2 * UI_VIEWPORT_HEIGHT as u32,
-                    ),
-                    ..Default::default()
-                }),
-                clear_color: ClearColorConfig::None,
-                ..Default::default()
-            },
-        ))
-        .id();
-
+fn setup_character_status_camera(mut commands: Commands) {
     commands.spawn((
-        Node {
-            width: Val::Vw(100.),
-            height: Val::Vh(100.),
-            border: UiRect::axes(Val::Vw(5.), Val::Vh(5.)),
-            flex_wrap: FlexWrap::Wrap,
-            ..default()
+        CharacterStatusCamera,
+        RenderLayers::from_layers(&[30]),
+        Camera {
+            // Higher than everything else
+            order: 2,
+            viewport: Some(Viewport {
+                physical_position: UVec2::new(
+                    2 * (WINDOW_WIDTH - UI_VIEWPORT_WIDTH) as u32,
+                    (WINDOW_HEIGHT - UI_VIEWPORT_HEIGHT) as u32,
+                ),
+
+                // No idea why we actually have to multiply here, probably something with scaling
+                physical_size: UVec2::new(
+                    2 * UI_VIEWPORT_WIDTH as u32,
+                    2 * UI_VIEWPORT_HEIGHT as u32,
+                ),
+                ..Default::default()
+            }),
+            clear_color: ClearColorConfig::None,
+            ..Default::default()
         },
-        BorderColor(RED.into()),
-        RenderLayers::layer(30),
-        UiTargetCamera(camera),
     ));
 }
 
@@ -143,7 +128,11 @@ impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Startup,
-            (setup_main_camera, setup_gamelog_camera, setup_ui_camera),
+            (
+                setup_main_camera,
+                setup_gamelog_camera,
+                setup_character_status_camera,
+            ),
         )
         .add_systems(Update, track_player.run_if(on_event::<GameTick>));
     }
