@@ -62,7 +62,7 @@ pub fn handle_animations(
     }
 
     if !is_animating {
-        events.send(GameTick);
+        events.write(GameTick);
     }
 }
 

@@ -97,7 +97,7 @@ fn setup_ui_camera(mut commands: Commands) {
         },
         BorderColor(RED.into()),
         RenderLayers::layer(30),
-        TargetCamera(camera),
+        UiTargetCamera(camera),
     ));
 }
 
@@ -132,7 +132,7 @@ fn track_player(
     mut camera_query: Query<&mut Transform, With<MainCamera>>,
 ) {
     for player_position in player_query.iter() {
-        let mut camera_transform = camera_query.single_mut();
+        let mut camera_transform = camera_query.single_mut().unwrap();
         camera_transform.translation = tile_to_world(player_position.0, None);
     }
 }

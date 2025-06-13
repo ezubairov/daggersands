@@ -10,7 +10,7 @@ pub fn handle_game_keyboard(
         KeyCode::KeyK,
         KeyCode::Numpad8,
     ]) {
-        input_events.send(InputEvent(IVec2::Y));
+        input_events.write(InputEvent(IVec2::Y));
     }
     if input.any_just_released([
         KeyCode::KeyS,
@@ -18,7 +18,7 @@ pub fn handle_game_keyboard(
         KeyCode::KeyJ,
         KeyCode::Numpad2,
     ]) {
-        input_events.send(InputEvent(IVec2::NEG_Y));
+        input_events.write(InputEvent(IVec2::NEG_Y));
     }
     if input.any_just_released([
         KeyCode::KeyD,
@@ -26,7 +26,7 @@ pub fn handle_game_keyboard(
         KeyCode::KeyL,
         KeyCode::Numpad6,
     ]) {
-        input_events.send(InputEvent(IVec2::X));
+        input_events.write(InputEvent(IVec2::X));
     }
     if input.any_just_released([
         KeyCode::KeyA,
@@ -34,19 +34,19 @@ pub fn handle_game_keyboard(
         KeyCode::KeyH,
         KeyCode::Numpad4,
     ]) {
-        input_events.send(InputEvent(IVec2::NEG_X));
+        input_events.write(InputEvent(IVec2::NEG_X));
     }
     if input.any_just_released([KeyCode::KeyY, KeyCode::Numpad7]) {
-        input_events.send(InputEvent(IVec2::new(-1, 1)));
+        input_events.write(InputEvent(IVec2::new(-1, 1)));
     }
     if input.any_just_released([KeyCode::KeyU, KeyCode::Numpad9]) {
-        input_events.send(InputEvent(IVec2::new(1, 1)));
+        input_events.write(InputEvent(IVec2::new(1, 1)));
     }
     if input.any_just_released([KeyCode::KeyB, KeyCode::Numpad1]) {
-        input_events.send(InputEvent(IVec2::new(-1, -1)));
+        input_events.write(InputEvent(IVec2::new(-1, -1)));
     }
     if input.any_just_released([KeyCode::KeyN, KeyCode::Numpad3]) {
-        input_events.send(InputEvent(IVec2::new(1, -1)));
+        input_events.write(InputEvent(IVec2::new(1, -1)));
     }
 }
 

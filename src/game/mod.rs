@@ -34,7 +34,7 @@ fn collect_actor_queue(
     mut queue: ResMut<ActorQueue>,
 ) {
     queue.0 = query.iter().collect();
-    if let Ok(player) = player_query.get_single() {
+    if let Ok(player) = player_query.single() {
         queue.0.push_front(player);
     }
 }
@@ -83,7 +83,7 @@ fn handle_input_events(
     mut query: Query<(&mut Player, &Position)>,
 ) {
     for event in events.read() {
-        if let Ok((mut player, position)) = query.get_single_mut() {
+        if let Ok((mut player, position)) = query.single_mut() {
             player.0 = Some(position.0 + event.0);
         }
     }

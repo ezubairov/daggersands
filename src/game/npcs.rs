@@ -28,6 +28,7 @@ pub fn get_npc_action(entity: Entity, world: &mut World) -> Option<Box<dyn Actio
     let player_position = world
         .query_filtered::<&Position, With<Player>>()
         .single(world)
+        .unwrap()
         .0;
     let map = world.get_resource::<Map>()?;
     let path = bracket_pathfinding::prelude::a_star_search(

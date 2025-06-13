@@ -22,7 +22,7 @@ fn setup_gamelog(camera: Query<Entity, With<GamelogCamera>>, mut commands: Comma
         },
         BorderColor(BLUE.into()),
         RenderLayers::layer(28),
-        TargetCamera(camera.single()),
+        UiTargetCamera(camera.single().unwrap()),
     ));
 }
 
@@ -32,7 +32,7 @@ fn render_gamelog(
     gamelog: Res<Gamelog>,
 ) {
     commands
-        .entity(gamelog_root.single())
+        .entity(gamelog_root.single().unwrap())
         .with_children(|parent| {
             for i in gamelog.entries.iter() {
                 parent.spawn((Text::new(format!("Foobar {i}")), Label));
