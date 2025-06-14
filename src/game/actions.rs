@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::{game::ActorQueue, prelude::*};
 
 pub fn get_action_at(entity: Entity, target: IVec2, world: &mut World) -> Option<Box<dyn Action>> {
     let actions: Vec<Box<dyn Action>> = vec![
@@ -21,12 +21,15 @@ pub struct MoveAction {
 }
 impl Action for MoveAction {
     fn execute(&self, world: &mut World) -> Option<Box<dyn Action>> {
-        world.get_mut::<Position>(self.entity)?.0 = self.target;
+        let mut original_position = world.get_mut::<Position>(self.entity)?;
+        let origin = original_position.0;
+        original_position.0 = self.target;
+
         // This triggers observers *right now*
         // We use this to reindex blocked tiles on a map
-        world.trigger(GameEvent::Move(self.entity, self.target));
+        world.trigger(GameEvent::Move(self.entity, (origin, self.target)));
         // This sends listeners and they might process event some time later in some order
-        world.send_event::<GameEvent>(GameEvent::Move(self.entity, self.target));
+        world.send_event::<GameEvent>(GameEvent::Move(self.entity, (origin, self.target)));
 
         None
     }
@@ -34,6 +37,12 @@ impl Action for MoveAction {
         let Some(map) = world.get_resource::<Map>() else {
             return false;
         };
+
+        // Can't move if you are dead!
+        if world.entity(self.entity).get::<Dead>().is_some() {
+            return false
+        }
+
 
         // Check if in bounds of a map
         if self.target.x < 1
@@ -70,6 +79,12 @@ impl Action for MeleeAction {
         let Some(map) = world.get_resource::<Map>() else {
             return false;
         };
+
+        // Can't attack if you are dead!
+        if world.entity(self.entity).get::<Dead>().is_some() {
+            return false
+        }
+
 
         // Check if in bounds of a map
         if self.target.x < 1
@@ -121,7 +136,10 @@ pub struct KillAction {
 impl Action for KillAction {
     fn execute(&self, world: &mut World) -> Option<Box<dyn Action>> {
         world.send_event::<GameEvent>(GameEvent::Kill(self.entity));
-        world.despawn(self.entity);
+        world
+            .entity_mut(self.entity)
+            .remove::<Health>()
+            .insert(Dead);
         None
     }
 }

@@ -7,7 +7,7 @@ pub fn handle_game_events(
 ) {
     for event in events.read() {
         match event {
-            GameEvent::Move(entity, target) => {
+            GameEvent::Move(entity, (_origin, target)) => {
                 commands
                     .entity(*entity)
                     .insert(Animation(AnimationKind::Translate(

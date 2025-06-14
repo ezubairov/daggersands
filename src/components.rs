@@ -18,6 +18,9 @@ pub struct Health {
 }
 
 #[derive(Component)]
+pub struct Dead;
+
+#[derive(Component)]
 pub struct Melee {
     pub damage: u32,
 }

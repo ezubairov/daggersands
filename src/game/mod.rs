@@ -29,8 +29,9 @@ struct ActionQueue(VecDeque<Box<dyn actions::Action>>);
 #[derive(Default, Resource)]
 struct ActorQueue(VecDeque<Entity>);
 
+#[allow(clippy::type_complexity)]
 fn collect_actor_queue(
-    query: Query<Entity, (With<Npc>, Without<Player>)>,
+    query: Query<Entity, (With<Npc>, Without<Player>, Without<Dead>)>,
     player_query: Query<Entity, With<Player>>,
     mut queue: ResMut<ActorQueue>,
 ) {
@@ -60,6 +61,7 @@ fn handle_actor_queue(world: &mut World) {
 
     // otherwise handle npc actor
     world.resource_mut::<ActorQueue>().0.pop_front();
+
     if let Some(action) = npcs::get_npc_action(entity, world) {
         world.resource_mut::<ActionQueue>().0.push_back(action);
     }
