@@ -18,7 +18,7 @@ pub fn handle_game_events(
                 let message = format!("{target_name} takes {value} damage!").to_string();
                 gamelog_event_writer.write(GamelogEvent(message));
             }
-            GameEvent::Kill(entity) => {
+            GameEvent::Kill(entity, _) => {
                 let entity_name = &query.get(*entity).unwrap().1.name;
                 let message = format!("{entity_name} dies!").to_string();
                 gamelog_event_writer.write(GamelogEvent(message));

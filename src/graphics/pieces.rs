@@ -48,12 +48,8 @@ pub fn update_piece_position(
     }
 }
 
-pub fn hide_dead_pieces(
-    mut commands: Commands,
-    query: Query<Entity, Added<Dead>>
-) {
+pub fn hide_dead_pieces(mut commands: Commands, query: Query<Entity, Added<Dead>>) {
     for entity in query.iter() {
         commands.entity(entity).remove::<Sprite>();
     }
-
 }

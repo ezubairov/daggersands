@@ -1,4 +1,4 @@
-use crate::{game::ActorQueue, prelude::*};
+use crate::prelude::*;
 
 pub fn get_action_at(entity: Entity, target: IVec2, world: &mut World) -> Option<Box<dyn Action>> {
     let actions: Vec<Box<dyn Action>> = vec![
@@ -40,9 +40,8 @@ impl Action for MoveAction {
 
         // Can't move if you are dead!
         if world.entity(self.entity).get::<Dead>().is_some() {
-            return false
+            return false;
         }
-
 
         // Check if in bounds of a map
         if self.target.x < 1
@@ -82,9 +81,8 @@ impl Action for MeleeAction {
 
         // Can't attack if you are dead!
         if world.entity(self.entity).get::<Dead>().is_some() {
-            return false
+            return false;
         }
-
 
         // Check if in bounds of a map
         if self.target.x < 1
@@ -135,7 +133,12 @@ pub struct KillAction {
 }
 impl Action for KillAction {
     fn execute(&self, world: &mut World) -> Option<Box<dyn Action>> {
-        world.send_event::<GameEvent>(GameEvent::Kill(self.entity));
+        let position = world.get::<Position>(self.entity)?.0;
+        // This triggers observers *right now*
+        // We use this to reindex blocked tiles on a map
+        world.trigger(GameEvent::Kill(self.entity, position));
+
+        world.send_event::<GameEvent>(GameEvent::Kill(self.entity, position));
         world
             .entity_mut(self.entity)
             .remove::<Health>()

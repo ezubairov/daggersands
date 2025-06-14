@@ -1,4 +1,7 @@
-use crate::prelude::*;
+use crate::{
+    maps::generator::{MAP_COUNT, MAP_HEIGHT, MAP_WIDTH},
+    prelude::*,
+};
 use bracket_geometry::prelude::{DistanceAlg, Point};
 use bracket_pathfinding::prelude::{Algorithm2D, BaseMap, SmallVec};
 
@@ -8,12 +11,25 @@ pub enum TileType {
     Floor,
 }
 
-#[derive(Default, Resource, Debug)]
+#[derive(Resource, Debug)]
 pub struct Map {
     pub tiles: Vec<TileType>,
     pub width: i32,
     pub height: i32,
     pub blocked: Vec<bool>,
+}
+
+impl Default for Map {
+    fn default() -> Map {
+        let mut map = Map {
+            width: MAP_WIDTH as i32,
+            height: MAP_HEIGHT as i32,
+            tiles: vec![TileType::Floor; MAP_COUNT],
+            blocked: vec![false; MAP_COUNT],
+        };
+        map.populate_blocked();
+        map
+    }
 }
 
 impl Map {

@@ -44,41 +44,41 @@ fn setup_gamelog_ui(camera: Query<Entity, With<GamelogCamera>>, mut commands: Co
 
 fn render_gamelog(
     mut commands: Commands,
-    gamelog_root: Query<Entity, With<GamelogUIRoot>>,
+    mut query: Query<(Entity, &mut ScrollPosition), With<GamelogUIRoot>>,
     mut events: EventReader<GamelogEvent>,
 ) {
-    commands
-        .entity(gamelog_root.single().unwrap())
-        .with_children(|parent| {
-            for event in events.read() {
-                parent
-                    .spawn(Node {
-                        min_height: Val::Px(LINE_HEIGHT),
-                        max_height: Val::Px(LINE_HEIGHT),
-                        ..default()
-                    })
-                    .insert(Pickable {
-                        should_block_lower: false,
-                        ..default()
-                    })
-                    .with_children(|parent| {
-                        parent
-                            .spawn((
-                                Text::new(format!("{}\n", event.0)),
-                                TextFont {
-                                    font_size: FONT_SIZE,
-                                    ..default()
-                                },
-                                TextLayout::new(JustifyText::Left, LineBreak::WordOrCharacter),
-                                Label,
-                            ))
-                            .insert(Pickable {
-                                should_block_lower: false,
+    let (gamelog_root, mut scroll_position) = query.single_mut().unwrap();
+    commands.entity(gamelog_root).with_children(|parent| {
+        for event in events.read() {
+            parent
+                .spawn(Node {
+                    min_height: Val::Px(LINE_HEIGHT),
+                    max_height: Val::Px(LINE_HEIGHT),
+                    ..default()
+                })
+                .insert(Pickable {
+                    should_block_lower: false,
+                    ..default()
+                })
+                .with_children(|parent| {
+                    parent
+                        .spawn((
+                            Text::new(format!("{}\n", event.0)),
+                            TextFont {
+                                font_size: FONT_SIZE,
                                 ..default()
-                            });
-                    });
-            }
-        });
+                            },
+                            TextLayout::new(JustifyText::Left, LineBreak::WordOrCharacter),
+                            Label,
+                        ))
+                        .insert(Pickable {
+                            should_block_lower: false,
+                            ..default()
+                        });
+                });
+            scroll_position.offset_y += LINE_HEIGHT
+        }
+    });
 }
 
 fn update_scroll_position(

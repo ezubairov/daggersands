@@ -12,7 +12,8 @@ pub enum GameEvent {
     Move(Entity, (IVec2, IVec2)),
     Attack(Entity, (Entity, IVec2)),
     Damage(Entity, u32),
-    Kill(Entity),
+    // Killed entity, position of death
+    Kill(Entity, IVec2),
 }
 
 #[derive(Event, Debug)]

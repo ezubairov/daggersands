@@ -12,7 +12,7 @@ pub fn spawn_npcs(mut commands: Commands) {
         Position(IVec2::new(3, 5)),
         Move,
         BlocksTile,
-        Health { hp: 10 },
+        Health { hp: 20 },
         Melee { damage: 2 },
     ));
     commands.spawn((
@@ -24,7 +24,7 @@ pub fn spawn_npcs(mut commands: Commands) {
         Position(IVec2::new(5, 5)),
         Move,
         BlocksTile,
-        Health { hp: 10 },
+        Health { hp: 20 },
         Melee { damage: 2 },
     ));
 }
