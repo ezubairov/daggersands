@@ -14,10 +14,10 @@ pub fn handle_game_events(
                         vec![tile_to_world(*target, None)].into(),
                     )));
             }
-            GameEvent::Attack(entity, target) => {
+            GameEvent::Attack(entity, (_target, target_position)) => {
                 if let Ok(transform) = query.get(*entity) {
                     let current = transform.translation;
-                    let target_v = tile_to_world(*target, None);
+                    let target_v = tile_to_world(*target_position, None);
                     commands
                         .entity(*entity)
                         .insert(Animation(AnimationKind::Translate(
@@ -25,6 +25,7 @@ pub fn handle_game_events(
                         )));
                 }
             }
+            _ => (),
         }
     }
 }

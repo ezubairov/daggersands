@@ -5,6 +5,7 @@ use std::collections::VecDeque;
 
 mod actions;
 mod animation;
+mod gamelog;
 mod npcs;
 mod player;
 
@@ -102,6 +103,7 @@ impl Plugin for GamePlugin {
                     handle_input_events,
                     animation::handle_game_events,
                     animation::handle_animations,
+                    gamelog::handle_game_events,
                 ),
             )
             .add_systems(Update, handle_action_queue.run_if(on_event::<GameTick>));

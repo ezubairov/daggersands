@@ -58,10 +58,9 @@ pub struct MeleeAction {
 }
 impl Action for MeleeAction {
     fn execute(&self, world: &mut World) -> Option<Box<dyn Action>> {
-        // currently won't handle two target entities on the same tile!
         let &target = get_entities_with::<Health>(self.target, world).first()?;
         let damage = world.get::<Melee>(self.entity)?.damage;
-        world.send_event::<GameEvent>(GameEvent::Attack(self.entity, self.target));
+        world.send_event::<GameEvent>(GameEvent::Attack(self.entity, (target, self.target)));
         Some(Box::new(DamageAction {
             entity: target,
             value: damage,
@@ -102,12 +101,16 @@ pub struct DamageAction {
 impl Action for DamageAction {
     fn execute(&self, world: &mut World) -> Option<Box<dyn Action>> {
         let mut health = world.get_mut::<Health>(self.entity)?;
+        let hp_before_damage = health.hp;
         health.hp = health.hp.saturating_sub(self.value);
+        let damage_taken = hp_before_damage - health.hp;
         if health.hp == 0 {
             return Some(Box::new(KillAction {
                 entity: self.entity,
             }));
         }
+
+        world.send_event::<GameEvent>(GameEvent::Damage(self.entity, damage_taken));
         None
     }
 }
@@ -117,6 +120,7 @@ pub struct KillAction {
 }
 impl Action for KillAction {
     fn execute(&self, world: &mut World) -> Option<Box<dyn Action>> {
+        world.send_event::<GameEvent>(GameEvent::Kill(self.entity));
         world.despawn(self.entity);
         None
     }

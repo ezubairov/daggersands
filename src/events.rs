@@ -9,5 +9,10 @@ pub struct GameTick;
 #[derive(Event, Debug)]
 pub enum GameEvent {
     Move(Entity, IVec2),
-    Attack(Entity, IVec2),
+    Attack(Entity, (Entity, IVec2)),
+    Damage(Entity, u32),
+    Kill(Entity),
 }
+
+#[derive(Event, Debug)]
+pub struct GamelogEvent(pub String);

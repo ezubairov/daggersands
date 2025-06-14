@@ -34,6 +34,7 @@ pub struct Player(pub Option<IVec2>);
 #[derive(Component)]
 pub struct Piece {
     pub kind: String,
+    pub name: String,
 }
 
 #[derive(Component)]

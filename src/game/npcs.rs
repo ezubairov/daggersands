@@ -7,19 +7,25 @@ pub fn spawn_npcs(mut commands: Commands) {
         Npc,
         Piece {
             kind: "NPC".to_string(),
+            name: "NPC 1".to_string(),
         },
         Position(IVec2::new(3, 5)),
         Move,
         BlocksTile,
+        Health { hp: 100 },
+        Melee { damage: 2 },
     ));
     commands.spawn((
         Npc,
         Piece {
             kind: "NPC".to_string(),
+            name: "NPC 2".to_string(),
         },
         Position(IVec2::new(5, 5)),
         Move,
         BlocksTile,
+        Health { hp: 100 },
+        Melee { damage: 2 },
     ));
 }
 

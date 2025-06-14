@@ -11,26 +11,12 @@ use crate::{camera::GamelogCamera, prelude::*};
 #[derive(Component)]
 pub struct GamelogUIRoot;
 
-#[derive(Default, Resource)]
-pub struct Gamelog {
-    entries: Vec<String>,
-    dirty: bool,
-}
-
-impl Gamelog {
-    fn add(&mut self, string: String) {
-        self.entries.push(string);
-        self.dirty = true
-    }
-}
-
 const LINE_HEIGHT: f32 = 21.;
 const FONT_SIZE: f32 = 14.;
 
 fn setup_gamelog_ui(camera: Query<Entity, With<GamelogCamera>>, mut commands: Commands) {
     commands
         .spawn((
-            GamelogUIRoot,
             Node {
                 width: Val::Vw(100.),
                 height: Val::Vh(100.),
@@ -41,73 +27,58 @@ fn setup_gamelog_ui(camera: Query<Entity, With<GamelogCamera>>, mut commands: Co
             RenderLayers::layer(28),
             UiTargetCamera(camera.single().unwrap()),
         ))
-        .insert(Pickable::IGNORE);
-
-    commands.insert_resource(Gamelog {
-        entries: vec![],
-        dirty: true,
-    });
+        .insert(Pickable::IGNORE)
+        .with_child((
+            GamelogUIRoot,
+            Node {
+                flex_direction: FlexDirection::Column,
+                align_self: AlignSelf::Stretch,
+                overflow: Overflow::scroll_y(),
+                border: UiRect::all(Val::Px(3.)),
+                flex_grow: 1.,
+                ..default()
+            },
+            BorderColor(WHITE.into()),
+        ));
 }
 
 fn render_gamelog(
     mut commands: Commands,
     gamelog_root: Query<Entity, With<GamelogUIRoot>>,
-    mut gamelog: ResMut<Gamelog>,
+    mut events: EventReader<GamelogEvent>,
 ) {
-    if gamelog.dirty {
-        commands
-            .entity(gamelog_root.single().unwrap())
-            .with_children(|parent| {
+    commands
+        .entity(gamelog_root.single().unwrap())
+        .with_children(|parent| {
+            for event in events.read() {
                 parent
-                    .spawn((
-                        Node {
-                            flex_direction: FlexDirection::Column,
-                            align_self: AlignSelf::Stretch,
-                            overflow: Overflow::scroll_y(),
-                            border: UiRect::all(Val::Px(3.)),
-                            flex_grow: 1.,
-                            ..default()
-                        },
-                        BorderColor(WHITE.into()),
-                    ))
+                    .spawn(Node {
+                        min_height: Val::Px(LINE_HEIGHT),
+                        max_height: Val::Px(LINE_HEIGHT),
+                        ..default()
+                    })
+                    .insert(Pickable {
+                        should_block_lower: false,
+                        ..default()
+                    })
                     .with_children(|parent| {
-                        for (j, i) in gamelog.entries.iter().enumerate() {
-                            parent
-                                .spawn(Node {
-                                    min_height: Val::Px(LINE_HEIGHT),
-                                    max_height: Val::Px(LINE_HEIGHT),
+                        parent
+                            .spawn((
+                                Text::new(format!("{}\n", event.0)),
+                                TextFont {
+                                    font_size: FONT_SIZE,
                                     ..default()
-                                })
-                                .insert(Pickable {
-                                    should_block_lower: false,
-                                    ..default()
-                                })
-                                .with_children(|parent| {
-                                    parent
-                                        .spawn((
-                                            Text::new(format!("{j}{i}\n")),
-                                            TextFont {
-                                                font_size: FONT_SIZE,
-                                                ..default()
-                                            },
-                                            TextLayout::new(
-                                                JustifyText::Left,
-                                                LineBreak::WordOrCharacter,
-                                            ),
-                                            Label,
-                                        ))
-                                        .insert(Pickable {
-                                            should_block_lower: false,
-                                            ..default()
-                                        });
-                                });
-                        }
+                                },
+                                TextLayout::new(JustifyText::Left, LineBreak::WordOrCharacter),
+                                Label,
+                            ))
+                            .insert(Pickable {
+                                should_block_lower: false,
+                                ..default()
+                            });
                     });
-            });
-
-        gamelog.entries = vec![];
-        gamelog.dirty = false
-    }
+            }
+        });
 }
 
 fn update_scroll_position(
@@ -138,7 +109,7 @@ fn update_scroll_position(
 pub struct GamelogUIPlugin;
 impl Plugin for GamelogUIPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<Gamelog>()
+        app
             // PostStartup as we need cameras to be already set up, but that's a hack
             // TODO: look for a way of defining dependency/order on a different plugin
             .add_systems(PostStartup, setup_gamelog_ui)

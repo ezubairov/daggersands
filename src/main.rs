@@ -48,5 +48,6 @@ fn main() {
         .add_event::<events::InputEvent>()
         .add_event::<events::GameEvent>()
         .add_event::<events::GameTick>()
+        .add_event::<events::GamelogEvent>()
         .run();
 }
