@@ -1,38 +1,37 @@
-use crate::{
-    maps::generator::{MAP_COUNT, MAP_HEIGHT, MAP_WIDTH},
-    prelude::*,
-};
+use crate::prelude::*;
 use bracket_geometry::prelude::{DistanceAlg, Point};
 use bracket_pathfinding::prelude::{Algorithm2D, BaseMap, SmallVec};
+
+pub const MAP_WIDTH: usize = 80;
+pub const MAP_HEIGHT: usize = 60;
+pub const MAP_COUNT: usize = MAP_WIDTH * MAP_HEIGHT;
 
 #[derive(PartialEq, Clone, Debug)]
 pub enum TileType {
     Wall,
     Floor,
+    DownStairs,
 }
 
-#[derive(Resource, Debug)]
+#[derive(Resource, Debug, Clone)]
 pub struct Map {
     pub tiles: Vec<TileType>,
     pub width: i32,
     pub height: i32,
     pub blocked: Vec<bool>,
-}
-
-impl Default for Map {
-    fn default() -> Map {
-        let mut map = Map {
-            width: MAP_WIDTH as i32,
-            height: MAP_HEIGHT as i32,
-            tiles: vec![TileType::Floor; MAP_COUNT],
-            blocked: vec![false; MAP_COUNT],
-        };
-        map.populate_blocked();
-        map
-    }
+    pub depth: u32,
 }
 
 impl Map {
+    pub fn new(depth: u32) -> Map {
+        Map {
+            tiles: vec![TileType::Wall; MAP_COUNT],
+            width: MAP_WIDTH as i32,
+            height: MAP_HEIGHT as i32,
+            blocked: vec![false; MAP_COUNT],
+            depth,
+        }
+    }
     pub fn xy_idx(&self, x: i32, y: i32) -> usize {
         (y as usize * self.width as usize) + x as usize
     }

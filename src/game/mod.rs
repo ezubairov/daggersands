@@ -98,7 +98,6 @@ impl Plugin for GamePlugin {
         app.init_resource::<ActionQueue>()
             .init_resource::<ActorQueue>()
             .init_resource::<QueueSystems>()
-            .add_systems(PostStartup, (player::spawn_player, npcs::spawn_npcs))
             .add_systems(
                 Update,
                 (

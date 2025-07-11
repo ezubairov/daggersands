@@ -6,6 +6,8 @@ mod globals;
 mod graphics;
 mod input;
 mod maps;
+mod pieces;
+mod random;
 mod ui;
 mod utils;
 
@@ -14,6 +16,8 @@ mod prelude {
     pub use crate::events::*;
     pub use crate::globals::*;
     pub use crate::maps::Map;
+    pub use crate::pieces::*;
+    pub use crate::random::*;
     pub use crate::utils::*;
     pub use bevy::prelude::*;
 }
@@ -49,5 +53,6 @@ fn main() {
         .add_event::<events::GameEvent>()
         .add_event::<events::GameTick>()
         .add_event::<events::GamelogEvent>()
+        .insert_resource(Rng(bracket_random::prelude::RandomNumberGenerator::new()))
         .run();
 }

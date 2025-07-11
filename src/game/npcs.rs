@@ -2,33 +2,6 @@ use crate::prelude::*;
 
 use super::actions::{get_action_at, Action};
 
-pub fn spawn_npcs(mut commands: Commands) {
-    commands.spawn((
-        Npc,
-        Piece {
-            kind: "NPC".to_string(),
-            name: "NPC 1".to_string(),
-        },
-        Position(IVec2::new(3, 5)),
-        Move,
-        BlocksTile,
-        Health { hp: 20 },
-        Melee { damage: 2 },
-    ));
-    commands.spawn((
-        Npc,
-        Piece {
-            kind: "NPC".to_string(),
-            name: "NPC 2".to_string(),
-        },
-        Position(IVec2::new(5, 5)),
-        Move,
-        BlocksTile,
-        Health { hp: 20 },
-        Melee { damage: 2 },
-    ));
-}
-
 pub fn get_npc_action(entity: Entity, world: &mut World) -> Option<Box<dyn Action>> {
     let mut npc_position = world.get_mut::<Position>(entity)?.0;
     let player_position = world

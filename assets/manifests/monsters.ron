@@ -1,0 +1,8 @@
+(
+  monsters: {
+    "orc": (
+      "health": ( "hp": 20 ),
+      "melee": ( "damage": 2),
+    )
+  }
+)

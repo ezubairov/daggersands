@@ -7,6 +7,9 @@ edition = "2021"
 bevy = "0.16.1"
 bracket-pathfinding = "0.8.7"
 bracket-geometry = "0.8.7"
+bracket-random = "0.8.7"
+leafwing_manifest = { version = "0.4.0", features = ["ron"] }
+serde = "1.0.219"
 
 # Enable a small amount of optimization in debug mode
 [profile.dev]
